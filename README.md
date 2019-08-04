@@ -1,5 +1,7 @@
 # 0xffff-lib
 
+[![Build Status](https://travis-ci.com/tikv/client-go.svg?branch=master)](https://travis-ci.com/tikv/client-go)
+
 ## Motivation
 
 `0xffff-lib` is a low level core library whose goal is enabling newbie to be familiar with modern C++ development, computer science's core courses and how to contribute to open source project by building a data-structure and algorithm library from scratch with the help of testing framework [`googletest`](https://github.com/google/googletest) and building system [`bazel`](https://www.bazel.build/).
