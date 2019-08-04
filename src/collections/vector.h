@@ -13,10 +13,17 @@ class Vec {
   private:
   T* buf;
   size_t len;
+  size_t cap;
 
   public:
   // Get the length of the vector
   size_t size();
+
+  // Get the size of underneath array
+  size_t capity();
+
+  // Set the size of underneath array
+  size_t capity(size_t s);
 
   // Examine if the vector is empty.
   bool is_empty();
@@ -36,12 +43,30 @@ inline Vec<T>::Vec()
 {
   this->buf = nullptr;
   len = 0;
+  cap = 0;
 }
 
 template <typename T>
 inline size_t Vec<T>::size()
 {
   return this->len;
+}
+
+template<typename T>
+inline size_t Vec<T>::capity()
+{
+  return this->cap;
+}
+
+template<typename T>
+inline size_t Vec<T>::capity(size_t s)
+{
+  if (s >= this->len) {
+    T *new_buf = new T[s];
+    this->cap = s;
+    std::copy(this->buf, this->buf+this->len, new_buf);
+  }
+  return this->cap;
 }
 
 template <typename T>
@@ -60,21 +85,29 @@ inline bool Vec<T>::is_empty()
 template <typename T>
 void Vec<T>::push(T data)
 {
-  T* new_buf = new T[this->len + 1];
-  std::copy(this->buf, this->buf + this->len, new_buf);
-  new_buf[this->len] = data;
-
-  delete[] this->buf;
-
-  this->buf = new_buf;
+  size_t total = this->len+1;
+  if (total > this->cap) {
+    size_t new_cap = total*3/2 + 1;
+    T *new_buf = new T[new_cap];
+    this->cap = new_cap;
+    std::copy(this->buf, this->buf + this->len, new_buf);
+    delete[] this->buf;
+    this->buf = new_buf;
+  }
+  buf[this->len]= data;
   this->len++;
+
 }
 
 template <typename T>
 std::optional<T> Vec<T>::pop()
 {
-  if (this->len > 0)
-    return this->buf[this->len-- - 1];
+  if (this->len > 0) {
+    if ((this->cap / this->len) > 2) {
+        capity((this->len-1)*3/2);
+    }
+    return this->buf[this->len-- -1];
+  }
 
   return {};
 }
