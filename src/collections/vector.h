@@ -2,6 +2,7 @@
 #define _VECTOR_
 
 #include <algorithm>
+#include <optional>
 
 template <typename T>
 class Vec {
@@ -24,7 +25,7 @@ class Vec {
   void push(T data);
 
   // Pop out an element from the back of vector
-  T* pop();
+  std::optional<T> pop();
 
   // Overloading index operator
   T operator[](size_t index);
@@ -70,25 +71,21 @@ void Vec<T>::push(T data)
 }
 
 template <typename T>
-T* Vec<T>::pop()
+std::optional<T> Vec<T>::pop()
 {
-  if (this->len > 0) {
-    T* result = &this->buf[this->len - 1];
-    this->len--;
-    return result;
-  }
+  if (this->len > 0)
+    return this->buf[this->len-- - 1];
 
-  return nullptr;
+  return {};
 }
 
 template <typename T>
 T Vec<T>::operator[](size_t idx)
 {
-  if (idx < this->len) {
+  if (idx < this->len)
     return this->buf[idx];
-  } else {
+  else
     throw "index out of range";
-  }
 }
 
 #endif /* ifndef _VECTOR_ */

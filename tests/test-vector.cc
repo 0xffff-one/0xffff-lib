@@ -40,6 +40,6 @@ TEST(TestVec, TestPop)
   Vec<int> vec;
   vec.push(233);
 
-  EXPECT_EQ(233, *vec.pop());
-  EXPECT_EQ(nullptr, vec.pop());
+  EXPECT_EQ(233, vec.pop().value());
+  EXPECT_EQ(std::nullopt, vec.pop());
 }
