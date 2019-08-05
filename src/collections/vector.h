@@ -13,7 +13,8 @@ class Vec {
   private:
   T* buf;
   size_t len;
-  size_t cap;
+  size_t _capacity;
+  void reallocate();
 
   public:
   // Get the length of the vector
@@ -22,8 +23,9 @@ class Vec {
   // Get the size of underneath array
   size_t capacity();
 
-  // Set the size of underneath array
-  size_t capacity(size_t s);
+  // Set the size of underneath array to at least len + additional
+  // Do nothing if capacity already greater than len + additional
+  void reserve (size_t additional);
 
   // Examine if the vector is empty.
   bool is_empty();
@@ -43,7 +45,16 @@ inline Vec<T>::Vec()
 {
   this->buf = nullptr;
   len = 0;
-  cap = 0;
+  _capacity = 0;
+}
+
+template <typename T>
+void Vec<T>::reallocate()
+{
+  T *new_buf = new T[this->_capacity];
+  std::copy(this->buf, this->buf + this->len, new_buf);
+  delete[] buf;
+  buf = new_buf;
 }
 
 template <typename T>
@@ -55,18 +66,17 @@ inline size_t Vec<T>::size()
 template<typename T>
 inline size_t Vec<T>::capacity()
 {
-  return this->cap;
+  return this->_capacity;
 }
 
 template<typename T>
-inline size_t Vec<T>::capacity(size_t s)
+void Vec<T>::reserve(size_t additional)
 {
-  if (s >= this->len) {
-    T *new_buf = new T[s];
-    this->cap = s;
-    std::copy(this->buf, this->buf+this->len, new_buf);
+  size_t new_capacity = this->len + additional;
+  if(this->_capacity < new_capacity) {
+    this->_capacity = new_capacity;
+    reallocate();
   }
-  return this->cap;
 }
 
 template <typename T>
@@ -86,25 +96,20 @@ template <typename T>
 void Vec<T>::push(T data)
 {
   size_t total = this->len+1;
-  if (total > this->cap) {
-    size_t new_cap = total*3/2 + 1;
-    T *new_buf = new T[new_cap];
-    this->cap = new_cap;
-    std::copy(this->buf, this->buf + this->len, new_buf);
-    delete[] this->buf;
-    this->buf = new_buf;
+  if (total > this->_capacity) {
+    size_t new_capacity = total*3/2 + 1;
+    this->_capacity = new_capacity;
+    reallocate();
   }
-  buf[this->len]= data;
-  this->len++;
-
+  buf[this->len++]= data;
 }
 
 template <typename T>
 std::optional<T> Vec<T>::pop()
 {
   if (this->len > 0) {
-    if ((this->cap / this->len) > 2) {
-        capacity((this->len-1)*3/2);
+    if ((this->_capacity / this->len) > 2) {
+        reserve((this->len-1)/2);
     }
     return this->buf[this->len-- -1];
   }
