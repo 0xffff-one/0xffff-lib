@@ -7,57 +7,57 @@
 template <typename T>
 class Vec {
   public:
-  Vec();
-  virtual ~Vec();
+    Vec();
+    virtual ~Vec();
 
   private:
-  T* buf;
-  size_t len;
+    T* buf;
+    size_t len;
 
   public:
-  // Get the length of the vector
-  size_t size();
+    // Get the length of the vector
+    size_t size();
 
-  // Examine if the vector is empty.
-  bool is_empty();
+    // Examine if the vector is empty.
+    bool is_empty();
 
-  // Push data back to the vector
-  void push(T data);
+    // Push data back to the vector
+    void push(T data);
 
-  // Pop out an element from the back of vector
-  std::optional<T> pop();
+    // Pop out an element from the back of vector
+    std::optional<T> pop();
 
-  // Overloading index operator
-  T operator[](size_t index);
+    // Overloading index operator
+    T operator[](size_t index);
 };
 
-template <typename T>
+  template <typename T>
 inline Vec<T>::Vec()
 {
   this->buf = nullptr;
   len = 0;
 }
 
-template <typename T>
+  template <typename T>
 inline size_t Vec<T>::size()
 {
   return this->len;
 }
 
-template <typename T>
+  template <typename T>
 inline Vec<T>::~Vec()
 {
   if (this->len == 0)
     delete[] this->buf;
 }
 
-template <typename T>
+  template <typename T>
 inline bool Vec<T>::is_empty()
 {
   return this->len == 0;
 }
 
-template <typename T>
+  template <typename T>
 void Vec<T>::push(T data)
 {
   T* new_buf = new T[this->len + 1];
@@ -70,7 +70,7 @@ void Vec<T>::push(T data)
   this->len++;
 }
 
-template <typename T>
+  template <typename T>
 std::optional<T> Vec<T>::pop()
 {
   if (this->len > 0)
@@ -79,7 +79,7 @@ std::optional<T> Vec<T>::pop()
   return {};
 }
 
-template <typename T>
+  template <typename T>
 T Vec<T>::operator[](size_t idx)
 {
   if (idx < this->len)
