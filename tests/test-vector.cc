@@ -1,30 +1,26 @@
-#include "src/collections/vector.h"
 #include <gtest/gtest.h>
+#include "src/collections/vector.h"
 
-TEST(TestVec, TestSize)
-{
+TEST(TestVec, TestSize) {
   Vec<int> vec;
   EXPECT_EQ(0, vec.size());
 }
 
-TEST(TestVec, TestIsEmpty)
-{
+TEST(TestVec, TestIsEmpty) {
   Vec<int> vec;
   EXPECT_EQ(true, vec.is_empty());
 }
 
-TEST(TestVec, TestIndexOp)
-{
+TEST(TestVec, TestIndexOp) {
   Vec<int> vec;
   vec.push(2333);
 
   EXPECT_EQ(2333, vec[0]);
 }
 
-TEST(TestVec, TestPush)
-{
+TEST(TestVec, TestPush) {
   Vec<int> vec;
-  int cases[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+  int cases[] = {0, 1, 2, 3, 4, 5, 6, 7};
 
   for (auto idx : cases) {
     vec.push(idx);
@@ -35,8 +31,7 @@ TEST(TestVec, TestPush)
   }
 }
 
-TEST(TestVec, TestPop)
-{
+TEST(TestVec, TestPop) {
   Vec<int> vec;
   vec.push(233);
 
