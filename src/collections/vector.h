@@ -20,10 +20,10 @@ class Vec {
   size_t size();
 
   // Get the size of underneath array
-  size_t capity();
+  size_t capacity();
 
   // Set the size of underneath array
-  size_t capity(size_t s);
+  size_t capacity(size_t s);
 
   // Examine if the vector is empty.
   bool is_empty();
@@ -53,13 +53,13 @@ inline size_t Vec<T>::size()
 }
 
 template<typename T>
-inline size_t Vec<T>::capity()
+inline size_t Vec<T>::capacity()
 {
   return this->cap;
 }
 
 template<typename T>
-inline size_t Vec<T>::capity(size_t s)
+inline size_t Vec<T>::capacity(size_t s)
 {
   if (s >= this->len) {
     T *new_buf = new T[s];
@@ -104,7 +104,7 @@ std::optional<T> Vec<T>::pop()
 {
   if (this->len > 0) {
     if ((this->cap / this->len) > 2) {
-        capity((this->len-1)*3/2);
+        capacity((this->len-1)*3/2);
     }
     return this->buf[this->len-- -1];
   }
