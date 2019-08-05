@@ -43,3 +43,22 @@ TEST(TestVec, TestPop)
   EXPECT_EQ(233, vec.pop().value());
   EXPECT_EQ(std::nullopt, vec.pop());
 }
+
+TEST(TestVec, TestCapacity)
+{
+  Vec<int> vec;
+  EXPECT_EQ(0, vec.capacity());
+  vec.push(123);
+  EXPECT_EQ(1 * 3/2 +1, vec.capacity());
+
+}
+
+TEST(TestVec, TestReserve)
+{
+  Vec<int> vec;
+  vec.push(1);
+  vec.push(11);
+  int additional = 5;
+  vec.reserve(additional);
+  EXPECT_GE(vec.capacity(), vec.size() + additional);
+}
