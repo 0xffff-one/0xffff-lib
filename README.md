@@ -58,11 +58,11 @@ As the example above has demonstrated, we need a `BUILD` file to describe how to
 cc_library(
     # Name of our module
     name = "matrix",
-    # All file with type `cc` is our sources
+    # Source files are those with `.cc` extension
     srcs = glob("[*.cc]"),
-    # Includes all header file in `hdrs`
+    # Includes all header files in `hdrs`
     hdrs = glob(["*.h"]),
-    # Visible from other package
+    # Visible to other packages (public)
     visibility = ["//visibility:public"],
 )
 ```
@@ -77,10 +77,10 @@ cc_test(
     deps = [
         # We need to import the module we want to test
         "//src/collections:vector",
-        # New module; or "//src/matrix:matrix"
+        # New module, note "//src/matrix:matrix" is also acceptable
         "//src/matrix",
 
-        // Import googletest to our tests.
+        // Import `googletest` to our tests.
         "@googletest//:gtest_main",
     ],
 )
