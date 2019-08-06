@@ -4,6 +4,7 @@ cc_test(
     deps = [
         "//src/collections:vector",
         "//src/iterator:iterator",
+        "//src/math:number-theory",
         "@googletest//:gtest_main",
         ],
     )

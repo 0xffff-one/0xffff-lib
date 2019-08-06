@@ -1,6 +1,6 @@
 # 0xffff-lib
 
-[![Build Status](https://travis-ci.com/tikv/client-go.svg?branch=master)](https://travis-ci.com/tikv/client-go)
+[![Build Status](https://travis-ci.org/0xffff-one/0xffff-lib.svg?branch=master)](https://travis-ci.org/0xffff-one/0xffff-lib)
 
 ## Motivation
 
