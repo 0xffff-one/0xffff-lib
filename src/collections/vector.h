@@ -6,15 +6,15 @@
 
 template <typename T>
 class Vec {
-  public:
+ public:
   Vec();
   virtual ~Vec();
 
-  private:
+ private:
   T* buf;
   size_t len;
 
-  public:
+ public:
   // Get the length of the vector
   size_t size();
 
@@ -32,34 +32,28 @@ class Vec {
 };
 
 template <typename T>
-inline Vec<T>::Vec()
-{
+inline Vec<T>::Vec() {
   this->buf = nullptr;
   len = 0;
 }
 
 template <typename T>
-inline size_t Vec<T>::size()
-{
+inline size_t Vec<T>::size() {
   return this->len;
 }
 
 template <typename T>
-inline Vec<T>::~Vec()
-{
-  if (this->len == 0)
-    delete[] this->buf;
+inline Vec<T>::~Vec() {
+  if (this->len == 0) delete[] this->buf;
 }
 
 template <typename T>
-inline bool Vec<T>::is_empty()
-{
+inline bool Vec<T>::is_empty() {
   return this->len == 0;
 }
 
 template <typename T>
-void Vec<T>::push(T data)
-{
+void Vec<T>::push(T data) {
   T* new_buf = new T[this->len + 1];
   std::copy(this->buf, this->buf + this->len, new_buf);
   new_buf[this->len] = data;
@@ -71,17 +65,14 @@ void Vec<T>::push(T data)
 }
 
 template <typename T>
-std::optional<T> Vec<T>::pop()
-{
-  if (this->len > 0)
-    return this->buf[this->len-- - 1];
+std::optional<T> Vec<T>::pop() {
+  if (this->len > 0) return this->buf[this->len-- - 1];
 
   return {};
 }
 
 template <typename T>
-T Vec<T>::operator[](size_t idx)
-{
+T Vec<T>::operator[](size_t idx) {
   if (idx < this->len)
     return this->buf[idx];
   else
