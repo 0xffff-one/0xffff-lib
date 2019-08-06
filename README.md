@@ -4,23 +4,23 @@
 
 ## Motivation
 
-`0xffff-lib` is a low level core library whose goal is enabling newbie to be familiar with modern C++ development, computer science's core courses and how to contribute to open source project by building a data-structure and algorithm library from scratch with the help of testing framework [`googletest`](https://github.com/google/googletest) and building system [`bazel`](https://www.bazel.build/).
+`0xffff-lib` is a low-level core library, with a goal of encouraging newbies to become familiar with modern C++ development, core courses of computer science, and how to contribute to open source projects by building a data structure and algorithm library from scratch with the help of testing framework [`googletest`](https://github.com/google/googletest) and building system [`bazel`](https://www.bazel.build/).
 
 ## Compilation
 
-### Dependency
+### Dependencies
 
-1. Install `bazel` which is a build system used to build our library: https://docs.bazel.build/versions/master/install.html
-2. Install `g++`, which is the default c++ compiler in many Linux distribution.
+1. Install `bazel`, which is a build system used to build our library: https://docs.bazel.build/versions/master/install.html
+2. Install `g++`, which is the default c++ compiler in mainstream Linux distributions.
 
 ### Testing
 
-1. `bazel test`: if you just want to check if any test failed.
-2. `bazel test tests --test_output=all`: if you want more verbose information.
+1. `bazel test`: to run all tests.
+2. `bazel test tests --test_output=all`: for verbose information.
 
 ## Project structure
 
-Currently, our library is quite simple and crude, we need more contributors to enhance it which is one of the project's motivations: encourage newbie to contribute to open source project.
+Currently, our library is quite simple and crude. We need more contributors to enhance it, which is one of the project's motivations: encourage newbies to contribute to open source projects.
 
 ```
 .
@@ -35,9 +35,9 @@ Currently, our library is quite simple and crude, we need more contributors to e
 └── WORKSPACE # import extenal dependencies
 ```
 
-### Add modules
+### Tutorial: adding modules
 
-For instance, if we are going to a matrix calculation module to our library. Considering the module doesn't belong to any existing module, we need to add a directory called `matrix` for logical need. Now our `src` directory looks like:
+For instance, we are going to add a matrix calculation module to our library. Considering the module is currently non-existent in our library, we need to create a directory called `matrix`. Now our `src` directory looks like this:
 
 ```
 .
@@ -52,7 +52,7 @@ For instance, if we are going to a matrix calculation module to our library. Con
     └── ...
 ```
 
-In the example above, we need a `BUILD` file to describe how to build `matrix` module. The `BUILD` file is read by `bazel` and determine how the module build and visibility to other modules. Now let's see how to write such a `BUILD` file from scratch.
+As the example above has demonstrated, we need a `BUILD` file to describe how to build the `matrix` module. `bazel` reads the `BUILD` file and determines how the module will be built and its visibility to other modules. Let's see how to write a basic `BUILD` file from scratch.
 
 ```bzl
 cc_library(
@@ -67,8 +67,8 @@ cc_library(
 )
 ```
 
-Now we have successfully added a module to our library, now it's time to add some tests to examine if the module works as we expected.
-For now, all the tests live in `tests` which is also a package managed by `bazel`. So it contains a `BUILD` file. Let's check out its content:
+Now we have successfully added a module to our library, it's time to add some tests to examine if the module works as expected.
+For now, all the tests reside in the `tests` directory. Since `tests` is a package managed by `bazel`, it contains a `BUILD` file. Let's check out its contents:
 
 ```bzl
 cc_test(
@@ -101,13 +101,13 @@ TEST(TestMatrix, TestAdd) {
 }
 ```
 
-Then, we can run the test by: `bazel test` and check if the function of the module works as expected.
+Finally, we can run the test by executing `bazel test` and check if the function(s) of the module works as expected.
 
 ## Contribution
 
-CI support is coming. And we will make some tags in the issues including:
+CI support is coming, and we will tag some issues, including:
 
-* Feature request; There will detailed document to describe the proposal.
+* Feature requests; There will detailed documentation about the proposals made by community members.
     * Easy
     * Medium
     * Hard
