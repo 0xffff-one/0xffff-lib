@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <optional>
 
+//#include "../iterator/iterator.h"
+#include "./Collection.h"
+
 template <typename T>
-class Vec {
+class Vec : Collection<T> {
   public:
   Vec();
   virtual ~Vec();
@@ -29,6 +32,69 @@ class Vec {
 
   // Overloading index operator
   T operator[](size_t index);
+
+  class iterator {//: public virtual collection_iterator<T> {
+	private:
+	  T *current_pos;
+	public:
+	//iterator()
+	//{
+	//  current_pos = nullptr;
+	//}
+	iterator(Vec<T> *p)
+	{
+	  if(p == nullptr) {
+		current_pos = nullptr;
+	  }
+	  else {
+		current_pos = p->buf;
+	  }
+	};
+
+	T operator*()
+	{
+	  return *current_pos;
+	}
+
+	T* operator->() const
+	{
+	  return current_pos;
+	}
+
+	T operator++()
+	{
+	  current_pos++;
+	  return *current_pos;
+	}
+
+	T operator++(int)
+	{
+	  T temp = *current_pos;
+	  current_pos++;
+	  return temp;
+	}
+
+	bool operator==(const iterator &arg) const
+	{
+	  return this->current_pos == arg.current_pos;
+	}
+
+  	bool operator!=(const T *arg) const
+	{
+	  return this->current_pos != arg;
+	}
+  };
+
+  iterator begin()
+  {
+	  return iterator(this);
+  };
+
+  T* end()
+  {
+	  return this->buf + this->len -1;
+  };
+
 };
 
 template <typename T>
@@ -87,5 +153,6 @@ T Vec<T>::operator[](size_t idx)
   else
     throw "index out of range";
 }
+
 
 #endif /* ifndef _VECTOR_ */

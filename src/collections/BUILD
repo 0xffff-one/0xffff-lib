@@ -1,5 +1,7 @@
 cc_library(
     name = "vector",
-    hdrs = ["vector.h"],
+    hdrs = ["vector.h",
+			"Collection.h"],
+	deps = ["//src/iterator:iterator"],
     visibility = ["//visibility:public"],
     )

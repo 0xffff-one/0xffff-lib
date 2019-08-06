@@ -43,3 +43,21 @@ TEST(TestVec, TestPop)
   EXPECT_EQ(233, vec.pop().value());
   EXPECT_EQ(std::nullopt, vec.pop());
 }
+
+TEST(TestVec, TestIterator)
+{
+  Vec<int> vec;
+  vec.push(1);
+  vec.push(2);
+  vec.push(3);
+  vec.push(4);
+  vec.push(5);
+  int counter = 1;
+
+  for(Vec<int>::iterator it = vec.begin(); it != vec.end(); it++)
+  {
+	EXPECT_EQ(counter, *it);
+	counter++;
+  }
+}
+
