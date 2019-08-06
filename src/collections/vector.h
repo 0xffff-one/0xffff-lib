@@ -9,6 +9,7 @@ template <typename T>
 class Vec {
  public:
   Vec();
+  Vec<T>(const Vec<T>& v);
   virtual ~Vec();
 
  private:
@@ -47,6 +48,14 @@ inline Vec<T>::Vec() {
   this->buf = nullptr;
   this->len = 0;
   this->_capacity = 0;
+}
+
+template <typename T>
+Vec<T>::Vec(const Vec<T>& v) {
+  this->buf = new T[v._capacity];
+  std::copy(v.buf, v.buf + v.len, this->buf);
+  this->len = v.len;
+  this->_capacity = v._capacity;
 }
 
 // Set this->_capacity to resize and reallocate to a new buffer
@@ -102,7 +111,8 @@ void Vec<T>::push(T data) {
     }
     reallocate(this->_capacity);
   }
-  buf[this->len++] = data;
+  buf[this->len] = data;
+  this->len++;
 }
 
 template <typename T>

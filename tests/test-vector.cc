@@ -58,3 +58,17 @@ TEST(TestVec, TestReserve) {
     EXPECT_GE(vec.capacity(), vec.size() + additional);
   }
 }
+
+TEST(TestVec, TestDeepCopy) {
+  int cases[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  Vec<int> vec;
+  for (auto data : cases) {
+    vec.push(data);
+  }
+  Vec<int> vec_copy = Vec(vec);
+  EXPECT_EQ(vec.size(), vec_copy.size());
+  EXPECT_EQ(vec.capacity(), vec_copy.capacity());
+  for (auto idx : cases) {
+    EXPECT_EQ(vec[idx], vec_copy[idx]);
+  }
+}
