@@ -14,7 +14,7 @@ class Vec {
   T* buf;
   size_t len;
   size_t _capacity;
-  void reallocate();
+  void reallocate(size_t resize);
 
  public:
   // Get the length of the vector
@@ -43,12 +43,14 @@ class Vec {
 template <typename T>
 inline Vec<T>::Vec() {
   this->buf = nullptr;
-  len = 0;
-  _capacity = 0;
+  this->len = 0;
+  this->_capacity = 0;
 }
 
+// Set this->_capacity to resize and reallocate to a new buffer
 template <typename T>
-void Vec<T>::reallocate() {
+void Vec<T>::reallocate(size_t resize) {
+  this->_capacity = resize;
   if (this->_capacity == 0) {
     delete[] buf;
     buf = nullptr;
@@ -73,8 +75,7 @@ template <typename T>
 void Vec<T>::reserve(size_t additional) {
   size_t new_capacity = this->len + additional;
   if (this->_capacity < new_capacity) {
-    this->_capacity = new_capacity;
-    reallocate();
+    reallocate(new_capacity);
   }
 }
 
@@ -97,7 +98,7 @@ void Vec<T>::push(T data) {
     } else {
       this->_capacity = this->_capacity * 2;
     }
-    reallocate();
+    reallocate(this->_capacity);
   }
   buf[this->len++] = data;
 }
@@ -107,11 +108,9 @@ std::optional<T> Vec<T>::pop() {
   if (this->len > 0) {
     T return_val = this->buf[this->len-- - 1];
     if (this->len == 0) {
-      this->_capacity = 0;
-      reallocate();
+      reallocate(0);
     } else if ((this->_capacity / this->len) > 4) {
-      this->_capacity /= 2;
-      reallocate();
+      reallocate(this->_capacity /= 2);
     }
     return return_val;
   }

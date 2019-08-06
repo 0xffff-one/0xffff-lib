@@ -40,12 +40,12 @@ TEST(TestVec, TestPop) {
 }
 
 TEST(TestVec, TestCapacity) {
+  int capacities[] = {0, 1, 2, 4};
   Vec<int> vec;
-  EXPECT_EQ(0, vec.capacity());
-  vec.push(123);
-  EXPECT_EQ(1, vec.capacity());
-  vec.push(233);
-  EXPECT_EQ(2, vec.capacity());
+  for (auto capacity: capacities) {
+    EXPECT_EQ(capacity, vec.capacity());
+    vec.push(capacity);
+  }
 }
 
 TEST(TestVec, TestReserve) {
