@@ -83,7 +83,7 @@ void Vec<T>::reserve(size_t additional) {
 
 template <typename T>
 inline Vec<T>::~Vec() {
-  if (this->len == 0) delete[] this->buf;
+  if (this->buf != nullptr) delete[] this->buf;
 }
 
 template <typename T>
@@ -112,7 +112,7 @@ std::optional<T> Vec<T>::pop() noexcept {
     if (this->len == 0) {
       reallocate(0);
     } else if ((this->_capacity / this->len) > 4) {
-      reallocate(this->_capacity /= 2);
+      reallocate(this->_capacity >> 1);
     }
     return return_val;
   }
