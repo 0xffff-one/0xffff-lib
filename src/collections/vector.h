@@ -108,13 +108,13 @@ void Vec<T>::push(T data) {
 template <typename T>
 std::optional<T> Vec<T>::pop() noexcept {
   if (this->len > 0) {
-    T return_val = this->buf[this->len-- - 1];
+    T ret = this->buf[this->len-- - 1];
     if (this->len == 0) {
       reallocate(0);
-    } else if ((this->_capacity / this->len) > 4) {
+    } else if (this->_capacity > (4 * this->len)) {
       reallocate(this->_capacity >> 1);
     }
-    return return_val;
+    return ret;
   }
 
   return {};

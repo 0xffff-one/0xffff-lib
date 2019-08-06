@@ -50,9 +50,11 @@ TEST(TestVec, TestCapacity) {
 
 TEST(TestVec, TestReserve) {
   Vec<int> vec;
-  vec.push(1);
-  vec.push(11);
   int additional = 5;
-  vec.reserve(additional);
-  EXPECT_GE(vec.capacity(), vec.size() + additional);
+  int cases[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+  for (auto data : cases) {
+    vec.push(data);
+    vec.reserve(additional);
+    EXPECT_GE(vec.capacity(), vec.size() + additional);
+  }
 }
