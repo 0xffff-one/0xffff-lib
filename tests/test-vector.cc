@@ -42,7 +42,7 @@ TEST(TestVec, TestPop) {
 TEST(TestVec, TestCapacity) {
   int capacities[] = {0, 1, 2, 4};
   Vec<int> vec;
-  for (auto capacity: capacities) {
+  for (auto capacity : capacities) {
     EXPECT_EQ(capacity, vec.capacity());
     vec.push(capacity);
   }

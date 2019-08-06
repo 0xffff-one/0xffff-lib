@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <optional>
+#include <stdexcept>
 
 template <typename T>
 class Vec {
@@ -34,7 +35,8 @@ class Vec {
   void push(T data);
 
   // Pop out an element from the back of vector
-  std::optional<T> pop();
+  // this function is no exception safe
+  std::optional<T> pop() noexcept;
 
   // Overloading index operator
   T operator[](size_t index);
@@ -104,7 +106,7 @@ void Vec<T>::push(T data) {
 }
 
 template <typename T>
-std::optional<T> Vec<T>::pop() {
+std::optional<T> Vec<T>::pop() noexcept {
   if (this->len > 0) {
     T return_val = this->buf[this->len-- - 1];
     if (this->len == 0) {
