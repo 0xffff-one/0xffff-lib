@@ -9,13 +9,16 @@ template <typename T>
 class Vec {
  public:
   Vec();
-  Vec<T>(const Vec<T>& v);
+  Vec(const Vec<T>& v);
+  T& operator=(const Vec<T>& v);
   virtual ~Vec();
 
  private:
   T* buf;
   size_t len;
   size_t _capacity;
+
+  // Reallocate the underlying buffer base on `resize`.
   void reallocate(size_t resize);
 
  public:
@@ -46,14 +49,26 @@ class Vec {
 template <typename T>
 inline Vec<T>::Vec() {
   this->buf = nullptr;
+
   this->len = 0;
   this->_capacity = 0;
 }
 
+// Copy ctor
 template <typename T>
 Vec<T>::Vec(const Vec<T>& v) {
   this->buf = new T[v._capacity];
   std::copy(v.buf, v.buf + v.len, this->buf);
+  this->len = v.len;
+  this->_capacity = v._capacity;
+}
+
+// Copy assignment
+template <typename T>
+T& Vec<T>::operator=(const Vec<T>& v) {
+  this->buf = new T[v._capacity];
+  std::copy(v.buf, v.buf + v.len, this->buf);
+
   this->len = v.len;
   this->_capacity = v._capacity;
 }
@@ -63,8 +78,9 @@ template <typename T>
 void Vec<T>::reallocate(size_t resize) {
   this->_capacity = resize;
   if (this->_capacity == 0) {
-    delete[] buf;
-    buf = nullptr;
+    delete[] this->buf;
+    this->buf = nullptr;
+    return;
   }
   T* new_buf = new T[this->_capacity];
   std::copy(this->buf, this->buf + this->len, new_buf);
@@ -85,9 +101,8 @@ inline size_t Vec<T>::capacity() {
 template <typename T>
 void Vec<T>::reserve(size_t additional) {
   size_t new_capacity = this->len + additional;
-  if (this->_capacity < new_capacity) {
+  if (this->_capacity < new_capacity) 
     reallocate(new_capacity);
-  }
 }
 
 template <typename T>
@@ -104,26 +119,27 @@ template <typename T>
 void Vec<T>::push(T data) {
   size_t total = this->len + 1;
   if (total > this->_capacity) {
-    if (this->_capacity == 0) {
+    if (this->_capacity == 0)
       this->_capacity = 1;
-    } else {
-      this->_capacity = this->_capacity * 2;
-    }
+    else
+      this->_capacity <<= 1;
+
     reallocate(this->_capacity);
   }
   buf[this->len] = data;
   this->len++;
 }
 
+// Pop the last element of the vector, if the vector is empty, return None.
 template <typename T>
 std::optional<T> Vec<T>::pop() noexcept {
   if (this->len > 0) {
     T ret = this->buf[this->len-- - 1];
-    if (this->len == 0) {
+    if (this->len == 0)
       reallocate(0);
-    } else if (this->_capacity > (4 * this->len)) {
+    else if (this->_capacity > this->len << 2)
       reallocate(this->_capacity >> 1);
-    }
+
     return ret;
   }
 
