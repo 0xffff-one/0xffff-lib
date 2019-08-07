@@ -101,8 +101,7 @@ inline size_t Vec<T>::capacity() {
 template <typename T>
 void Vec<T>::reserve(size_t additional) {
   size_t new_capacity = this->len + additional;
-  if (this->_capacity < new_capacity) 
-    reallocate(new_capacity);
+  if (this->_capacity < new_capacity) reallocate(new_capacity);
 }
 
 template <typename T>
