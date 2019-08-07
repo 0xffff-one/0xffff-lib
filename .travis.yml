@@ -16,4 +16,5 @@ before_install:
   - sudo dpkg -i bazel_0.28.1-linux-x86_64.deb
 
 script:
+  - ./scripts/run-clang-format.py -r src tests
   - bazel test tests --test_output=all --sandbox_debug
