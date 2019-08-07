@@ -7,17 +7,29 @@ addons:
     packages:
       - wget
       - pkg-config
-      - go
 
 before_install:
   - sudo apt-get install -qq g++-8
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
 
   - wget https://github.com/bazelbuild/bazel/releases/download/0.28.1/bazel_0.28.1-linux-x86_64.deb
-  - go get github.com/bazelbuild/buildtools/buildifier
   - sudo dpkg -i bazel_0.28.1-linux-x86_64.deb
+  - go get -u github.com/bazelbuild/buildtools/buildifier
 
-script:
-  - buildifier -r . -mode=check || travis_terminate 4
-  - ./scripts/run-clang-format.py -r src tests || travis_terminate 1
-  - bazel test tests --test_output=all --sandbox_debug || travis_terminate 1
+stages:
+  - checks
+  - tests
+
+jobs:
+  include:
+    - stage: checks
+      script:
+        - buildifier  -mode=check -r . || travis_terminate 4
+
+    - stage: checks
+      script:
+        - ./scripts/run-clang-format.py -r src tests || travis_terminate 1
+
+    - stage: tests
+      script:
+        - bazel clean && bazel test tests --test_output=all || travis_terminate 1
