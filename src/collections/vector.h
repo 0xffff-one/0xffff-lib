@@ -8,7 +8,7 @@ template <typename T>
 class Vec {
  public:
   Vec();
-  Vec(T*);
+  Vec(T*, size_t);
   virtual ~Vec();
 
  private:
@@ -82,7 +82,7 @@ class Vec {
   iterator begin() { return iterator(this); };
 
   iterator end() {
-    Vec<T>* temp = new Vec<T>(this->buf + this->len);
+    Vec<T>* temp = new Vec<T>(this->buf + this->len, 0);
     return iterator(temp);
   };
 };
@@ -94,9 +94,9 @@ inline Vec<T>::Vec() {
 }
 
 template <typename T>
-inline Vec<T>::Vec(T* buf) {
+inline Vec<T>::Vec(T* buf, size_t len) {
   this->buf = buf;
-  len = 0;
+  this->len = len;
 }
 
 template <typename T>
