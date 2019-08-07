@@ -5,5 +5,5 @@ cc_test(
         "//src/collections:vector",
         "//src/math:number-theory",
         "@googletest//:gtest_main",
-        ],
-    )
+    ],
+)
