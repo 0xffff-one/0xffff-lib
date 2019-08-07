@@ -5,8 +5,7 @@
 #include <optional>
 #include <stdexcept>
 
-template <typename T>
-class Vec {
+template <typename T> class Vec {
  public:
   Vec();
   Vec(const Vec<T>& v);
