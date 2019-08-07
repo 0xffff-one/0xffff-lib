@@ -3,20 +3,31 @@
 
 #include <algorithm>
 #include <optional>
+#include <stdexcept>
 
 template <typename T>
 class Vec {
  public:
   Vec();
+  Vec<T>(const Vec<T>& v);
   virtual ~Vec();
 
  private:
   T* buf;
   size_t len;
+  size_t _capacity;
+  void reallocate(size_t resize);
 
  public:
   // Get the length of the vector
   size_t size();
+
+  // Get the size of underneath array
+  size_t capacity();
+
+  // Set the size of underneath array to at least len + additional
+  // Do nothing if capacity already greater than len + additional
+  void reserve(size_t additional);
 
   // Examine if the vector is empty.
   bool is_empty();
@@ -25,7 +36,8 @@ class Vec {
   void push(T data);
 
   // Pop out an element from the back of vector
-  std::optional<T> pop();
+  // this function is no exception safe
+  std::optional<T> pop() noexcept;
 
   // Overloading index operator
   T operator[](size_t index);
@@ -34,7 +46,30 @@ class Vec {
 template <typename T>
 inline Vec<T>::Vec() {
   this->buf = nullptr;
-  len = 0;
+  this->len = 0;
+  this->_capacity = 0;
+}
+
+template <typename T>
+Vec<T>::Vec(const Vec<T>& v) {
+  this->buf = new T[v._capacity];
+  std::copy(v.buf, v.buf + v.len, this->buf);
+  this->len = v.len;
+  this->_capacity = v._capacity;
+}
+
+// Set this->_capacity to resize and reallocate to a new buffer
+template <typename T>
+void Vec<T>::reallocate(size_t resize) {
+  this->_capacity = resize;
+  if (this->_capacity == 0) {
+    delete[] buf;
+    buf = nullptr;
+  }
+  T* new_buf = new T[this->_capacity];
+  std::copy(this->buf, this->buf + this->len, new_buf);
+  delete[] buf;
+  buf = new_buf;
 }
 
 template <typename T>
@@ -43,8 +78,21 @@ inline size_t Vec<T>::size() {
 }
 
 template <typename T>
+inline size_t Vec<T>::capacity() {
+  return this->_capacity;
+}
+
+template <typename T>
+void Vec<T>::reserve(size_t additional) {
+  size_t new_capacity = this->len + additional;
+  if (this->_capacity < new_capacity) {
+    reallocate(new_capacity);
+  }
+}
+
+template <typename T>
 inline Vec<T>::~Vec() {
-  if (this->len == 0) delete[] this->buf;
+  if (this->buf != nullptr) delete[] this->buf;
 }
 
 template <typename T>
@@ -54,19 +102,30 @@ inline bool Vec<T>::is_empty() {
 
 template <typename T>
 void Vec<T>::push(T data) {
-  T* new_buf = new T[this->len + 1];
-  std::copy(this->buf, this->buf + this->len, new_buf);
-  new_buf[this->len] = data;
-
-  delete[] this->buf;
-
-  this->buf = new_buf;
+  size_t total = this->len + 1;
+  if (total > this->_capacity) {
+    if (this->_capacity == 0) {
+      this->_capacity = 1;
+    } else {
+      this->_capacity = this->_capacity * 2;
+    }
+    reallocate(this->_capacity);
+  }
+  buf[this->len] = data;
   this->len++;
 }
 
 template <typename T>
-std::optional<T> Vec<T>::pop() {
-  if (this->len > 0) return this->buf[this->len-- - 1];
+std::optional<T> Vec<T>::pop() noexcept {
+  if (this->len > 0) {
+    T ret = this->buf[this->len-- - 1];
+    if (this->len == 0) {
+      reallocate(0);
+    } else if (this->_capacity > (4 * this->len)) {
+      reallocate(this->_capacity >> 1);
+    }
+    return ret;
+  }
 
   return {};
 }
