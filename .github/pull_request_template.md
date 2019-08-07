@@ -1,26 +1,35 @@
 ## What have you changed? (mandatory)
 
 > - Summarize your pull request (mandatory)
-> - How does this pull request work? Need a brief introduction for the changed logic (optional)
-> - Separately describe each logical change and avoid lazy messages (optional)
-> - Describe any limitations of the current code (optional)
+> - How does this pull request work: a brief introduction for the changed logic (optional)
+> - Separately describe each logical change and avoid lazy messages (optional but recommended)
+> - Describe all the limitations of the current code (optional)
 > 
-> **NOTE**: Do not assume reviewers understand the original issue
+> **NOTE**: Do not assume that reviewers can understand the original issue
 
-## What are the type of the pull request? (mandatory)
+<!--- (Edit here) --->
+
+## What is the type of the pull request? (mandatory)
 
 > The currently defined types are listed below, please pick one or more for this pull request
 > - New features (adds functionality)
 > - Improvement (an improvement to existing features)
-> - Bug fix (fixes an issue)
-> - Documentation (add some documentatation)
+> - Fixing (fixes an issue)
+> - Documentation (improvements or changes to documentation)
 
+<!--- (Edit here) --->
 
-## Does this pull request affect documentation (mandatory)
+## Does this pull request affect documentation (docs)? (mandatory)
 
-> - If document has changed, please open an new issue and add the pull request link that solve the new issue here.
+> - If the documentation has changed, please open a new issue and add the pull request link that resolves the new issue here.
 
+<!--- (Edit here) --->
 
-## Refer to a related pull request or issue link (optional)
+## Reference to a related pull request or issue link (optional)
 
-## Benchmark result if necessary (optional)
+<!--- (Edit here) --->
+## Benchmark results (optional)
+
+<!--- (Edit here) --->
+
+<!--- Last edited by `> [name=Alex Hsieh] 收工` in 2019.8.26 23:45--->
