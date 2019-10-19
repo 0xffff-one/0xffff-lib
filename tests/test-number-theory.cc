@@ -1,8 +1,9 @@
-#include "src/math/number-theory.h"
-
 #include <gtest/gtest.h>
+
 #include <utility>
 #include <vector>
+
+#include "src/math/number-theory.h"
 
 TEST(TestGcd, TestCoprime) {
   std::vector<std::pair<int, int>> cases = {
