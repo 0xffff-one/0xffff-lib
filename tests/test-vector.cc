@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "src/collections/vector.h"
 
 TEST(TestVec, TestSize) {
