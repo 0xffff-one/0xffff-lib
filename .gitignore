@@ -1,3 +1,7 @@
 /bazel-*
 .vscode
 .idea
+.ccls-cache
+.clwb
+vgcore.*
+.gdb_history
