@@ -6,16 +6,18 @@
 #include <cstring>
 #include <functional>
 
-template <typename T, typename Comparator = std::less<T> >
+template <typename K, typename V, typename Comparator = std::less<K> >
 class SkipList {
  private:
   struct Node {
-    T value;
+    K key;
+    V value;
     size_t level_num{};
     struct nodeLevel {
       struct Node *forward;
     } * level;
-    Node(T value, int level) {
+    Node(K key, V value, int level) {
+      this->key = key;
       this->value = value;
       this->level = new nodeLevel[level];
       this->level_num = level;
@@ -23,6 +25,7 @@ class SkipList {
     }
 
     Node(const Node &other) {
+      this->key = other.key;
       this->value = other.value;
       this->level_num = other.level_num;
       std::copy(other.level, other.level + level_num, this->level);
@@ -32,7 +35,7 @@ class SkipList {
   };
 
   static const size_t MAXLEVEL = 32;
-  int largestLevel;
+  int largestLevel{};
   Node *header, *tail;
   size_t len;
   Comparator cmp;
@@ -41,18 +44,20 @@ class SkipList {
 
  public:
   SkipList(Comparator comparator);
-  SkipList(const SkipList<T, Comparator> &other);
-  SkipList &operator=(const SkipList<T, Comparator> &other);
+  SkipList(const SkipList<K, V, Comparator> &other);
+  SkipList &operator=(const SkipList<K, V, Comparator> &other);
   virtual ~SkipList();
 
-  Node *insert(T value);
+  Node *insert(K key, V value, bool replace= false);
+  Node *search(const K &key);
+  bool remove(const K &key);
   size_t size() const;
 };
 
-template <typename T, typename Comparator>
-SkipList<T, Comparator>::SkipList(Comparator comparator) : cmp(comparator) {
+template <typename K, typename V, typename Comparator>
+SkipList<K, V, Comparator>::SkipList(Comparator comparator) : cmp(comparator) {
   this->len = 0;
-  this->header = new Node(0, MAXLEVEL);
+  this->header = new Node(K(), V(), MAXLEVEL);
 
   for (size_t i = 0; i < MAXLEVEL; i++) {
     this->header->level[i].forward = nullptr;
@@ -62,8 +67,8 @@ SkipList<T, Comparator>::SkipList(Comparator comparator) : cmp(comparator) {
   this->tail = nullptr;
 }
 
-template <typename T, typename Comparator>
-SkipList<T, Comparator>::~SkipList() {
+template <typename K, typename V, typename Comparator>
+SkipList<K, V, Comparator>::~SkipList() {
   Node *node = this->header->level[0].forward, *next;
   delete this->header;
   while (node) {
@@ -74,8 +79,8 @@ SkipList<T, Comparator>::~SkipList() {
 }
 
 // http://www.voidcn.com/article/p-mwawflgq-bgg.html
-template <typename T, typename Comparator>
-int SkipList<T, Comparator>::randomLevel() {
+template <typename K, typename V, typename Comparator>
+int SkipList<K, V, Comparator>::randomLevel() {
   int level = 1;
 
   while ((random() & 0xFFFF) < (0.25 * 0xFFFF)) level += 1;
@@ -83,8 +88,8 @@ int SkipList<T, Comparator>::randomLevel() {
   return (level < signed(MAXLEVEL)) ? level : MAXLEVEL;
 }
 
-template <typename T, typename Comparator>
-SkipList<T, Comparator>::SkipList(const SkipList<T, Comparator> &other) {
+template <typename K, typename V, typename Comparator>
+SkipList<K, V, Comparator>::SkipList(const SkipList<K, V, Comparator> &other) {
   SkipList nl = SkipList(other.cmp);
   nl.largestLevel = other.largestLevel;
   nl.len = other.len;
@@ -96,23 +101,27 @@ SkipList<T, Comparator>::SkipList(const SkipList<T, Comparator> &other) {
   }
 }
 
-template <typename T, typename Comparator>
-typename SkipList<T, Comparator>::Node *SkipList<T, Comparator>::insert(
-    T value) {
+template <typename K, typename V, typename Comparator>
+typename SkipList<K, V, Comparator>::Node *SkipList<K, V, Comparator>::insert(
+        K key, V value, bool replace) {
+  // store the level and the position to insert After
   Node *update[MAXLEVEL], *x;
   Comparator lessThan = this->cmp;
 
   x = this->header;
   for (int i = this->largestLevel - 1; i >= 0; i--) {
     while (x->level[i].forward && /*this level enable*/
-           lessThan(x->level[i].forward->value, value)) {
+           lessThan(x->level[i].forward->key, key)) {
       x = x->level[i].forward;
     }
 
-    // equal just return the existing node's ptr
-    if (x->level[i].forward && !lessThan(x->level[i].forward->value, value) &&
-        !lessThan(value, x->level[i].forward->value)) {
-      return x->level[i].forward;
+    // equal key conflict
+    if (x->level[i].forward &&
+        !lessThan(x->level[i].forward->key, key) &&
+        !lessThan(key, x->level[i].forward->key)) {
+        if(!replace) return nullptr;
+        else
+            this->len--; // minus one first
     }
     update[i] = x;
   }
@@ -124,7 +133,7 @@ typename SkipList<T, Comparator>::Node *SkipList<T, Comparator>::insert(
     }
     this->largestLevel = level_num;
   }
-  x = new Node(value, level_num);
+  x = new Node(key, value, level_num);
 
   for (int i = 0; i < this->largestLevel; i++) {
     x->level[i].forward = update[i]->level[i].forward;
@@ -135,9 +144,58 @@ typename SkipList<T, Comparator>::Node *SkipList<T, Comparator>::insert(
   return x;
 }
 
-template <typename T, typename Comparator>
-inline size_t SkipList<T, Comparator>::size() const {
+template <typename K, typename V, typename Comparator>
+inline size_t SkipList<K, V, Comparator>::size() const {
   return this->len;
 }
+
+template<typename K, typename V, typename Comparator>
+typename SkipList<K, V, Comparator>::Node *SkipList<K, V, Comparator>::search(const K &key) {
+    Node *x = this->header, *ret = nullptr;
+    Comparator less = this->cmp;
+    for(int i=this->largestLevel-1;i>=0;i--) {
+        while (x->level[i].forward &&
+            less(x->level[i].forward->key, key)) {
+            x = x->level[i].forward;
+        }
+
+        // equal just return
+        if(x->level[i].forward &&
+            !less(x->level[i].forward->key, key) &&
+            !less(key, x->level[i].forward->key)) {
+            ret = x->level[i].forward;
+            return ret;
+        }
+    }
+    return ret;
+}
+
+template<typename K, typename V, typename Comparator>
+bool SkipList<K, V, Comparator>::remove(const K& key) {
+    Node *x = this->header;
+    bool ret = false;
+    Comparator less = this->cmp;
+    for(int i=this->largestLevel-1;i>=0;i--) {
+        while (x->level[i].forward &&
+               less(x->level[i].forward->key, key)) {
+            x = x->level[i].forward;
+        }
+
+        // equal just return
+        if(x->level[i].forward &&
+           !less(x->level[i].forward->key, key) &&
+           !less(key, x->level[i].forward->key)) {
+//            ret = x->level[i].forward;
+            Node *del = x->level[i].forward;
+            x->level[i].forward = del->level[i].forward;
+            delete del;
+            ret = true;
+            this->len--;
+            return ret;
+        }
+    }
+    return ret;
+}
+
 
 #endif  // SKIP_LIST
