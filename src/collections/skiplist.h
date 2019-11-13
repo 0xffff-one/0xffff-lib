@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
+#include <iostream>
+#include <iterator>
 
 #define LEVEL_RATE 0.5
 
@@ -54,6 +56,10 @@ class SkipList {
   Node *search(const K &key);
   bool remove(const K &key);
   size_t size() const;
+
+  class iterator;
+  iterator begin() const;
+  iterator end() const;
 };
 
 template <typename K, typename V, typename Comparator>
@@ -151,6 +157,7 @@ typename SkipList<K, V, Comparator>::Node *SkipList<K, V, Comparator>::insert(
   }
 
   this->len++;
+  if (x->level[0].forward == nullptr) this->tail = x;
   return x;
 }
 
@@ -181,27 +188,73 @@ typename SkipList<K, V, Comparator>::Node *SkipList<K, V, Comparator>::search(
 
 template <typename K, typename V, typename Comparator>
 bool SkipList<K, V, Comparator>::remove(const K &key) {
-  Node *x = this->header;
+  Node *x = this->header, *update[MAXLEVEL];
+  ;
   bool ret = false;
   Comparator less = this->cmp;
   for (int i = this->largestLevel - 1; i >= 0; i--) {
     while (x->level[i].forward && less(x->level[i].forward->key, key)) {
       x = x->level[i].forward;
     }
-
-    // equal just return
-    if (x->level[i].forward && !less(x->level[i].forward->key, key) &&
-        !less(key, x->level[i].forward->key)) {
-      //            ret = x->level[i].forward;
-      Node *del = x->level[i].forward;
-      x->level[i].forward = del->level[i].forward;
-      delete del;
-      ret = true;
-      this->len--;
-      return ret;
-    }
+    update[i] = x;
   }
+
+  if (x->level[0].forward && !less(x->level[0].forward->key, key) &&
+      !less(key, x->level[0].forward->key)) {
+    Node *del = x->level[0].forward;
+    for (int j = 0; j < this->largestLevel; j++) {
+      if (update[j]->level[j].forward == del) {
+        update[j]->level[j].forward = del->level[j].forward;
+      }
+    }
+
+    ret = true;
+    if (del->level[0].forward == nullptr) this->tail = del;
+    while (this->largestLevel > 1 &&
+           this->header->level[this->largestLevel - 1].forward == nullptr)
+      this->largestLevel--;
+    this->len--;
+  }  // find one
+
   return ret;
+}
+
+// Iterator
+template <typename K, typename V, typename Comparator>
+class SkipList<K, V, Comparator>::iterator
+    : std::iterator<std::forward_iterator_tag,
+                    typename SkipList<K, V, Comparator>::Node> {
+ private:
+  Node *curr;
+
+ public:
+  iterator(Node *n) : curr(n){};
+  iterator(const iterator &other) { this->curr = other.curr; }
+  iterator &operator++() {
+    this->curr = this->curr->level[0].forward;
+    return *this;
+  }
+  iterator &operator++(int) {
+    auto tmp = this;
+    this->curr = this->curr->level[0].forward;
+    return *tmp;
+  }
+  bool operator==(const iterator &rhs) { return rhs.curr == this->curr; }
+  bool operator!=(const iterator &rhs) { return !(rhs.curr == this->curr); }
+  Node *operator->() { return curr; }
+  Node &operator*() { return *curr; }
+};
+
+template <typename K, typename V, typename Comparator>
+typename SkipList<K, V, Comparator>::iterator
+SkipList<K, V, Comparator>::begin() const {
+  return SkipList::iterator(this->header->level[0].forward);
+}
+
+template <typename K, typename V, typename Comparator>
+typename SkipList<K, V, Comparator>::iterator SkipList<K, V, Comparator>::end()
+    const {
+  return SkipList::iterator(nullptr);
 }
 
 #endif  // SKIP_LIST

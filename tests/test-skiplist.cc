@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <iostream>
 #include <string>
+#include <vector>
 
 #include "src/collections/skiplist.h"
 
@@ -25,7 +27,7 @@ TEST(SkipList, Insert) {
 
 TEST(SkipList, InsertLargeAmount) {
   auto lst = SkipList<std::string, std::string>(std::less<std::string>());
-  const int N = 2 << 10;
+  const int N = 1 << 10;
   for (int i = 1; i <= N; i++) {
     std::string key = "key" + std::to_string(i);
     std::string value = "value" + std::to_string(i);
@@ -33,6 +35,16 @@ TEST(SkipList, InsertLargeAmount) {
     EXPECT_EQ(np->value, value);
   }
   EXPECT_EQ(lst.size(), N);
+  auto it = lst.begin();
+  std::string prevK = it->key, prevV = it->value;
+  it++;
+  int c = 1;
+  for (; it != lst.end(); it++) {
+    c++;
+    EXPECT_LT(prevK, it->key);
+    EXPECT_LT(prevV, it->value);
+  }
+  EXPECT_EQ(c, lst.size());
 }
 
 TEST(SkipList, Remove) {
